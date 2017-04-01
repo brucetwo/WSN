@@ -10,12 +10,23 @@ from app.exceptions import ValidationError
 from . import db, login_manager
 
 
+# class Permission:
+#     FOLLOW = 0x01
+#     COMMENT = 0x02
+#     WRITE_ARTICLES = 0x04
+#     MODERATE_COMMENTS = 0x08
+#     ADMINISTER = 0x80
+
 class Permission:
     FOLLOW = 0x01
     COMMENT = 0x02
     WRITE_ARTICLES = 0x04
     MODERATE_COMMENTS = 0x08
+    DELIVER=0x16
     ADMINISTER = 0x80
+
+
+
 
 
 class Role(db.Model):
@@ -29,9 +40,11 @@ class Role(db.Model):
     @staticmethod
     def insert_roles():
         roles = {
+            # 普通用户
             'User': (Permission.FOLLOW |
                      Permission.COMMENT |
                      Permission.WRITE_ARTICLES, True),
+            # 可修改评论者
             'Moderator': (Permission.FOLLOW |
                           Permission.COMMENT |
                           Permission.WRITE_ARTICLES |
@@ -73,6 +86,7 @@ class User(UserMixin, db.Model):
     about_me = db.Column(db.Text())
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
+    # 头像
     avatar_hash = db.Column(db.String(32))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     followed = db.relationship('Follow',
@@ -87,6 +101,7 @@ class User(UserMixin, db.Model):
                                 cascade='all, delete-orphan')
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
 
+    # 测试
     @staticmethod
     def generate_fake(count=100):
         from sqlalchemy.exc import IntegrityError

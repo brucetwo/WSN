@@ -219,7 +219,7 @@ def followed_by(username):
                            follows=follows)
 
 
-@main.route('/all')
+@main.route('/show_all')
 @login_required
 def show_all():
     resp = make_response(redirect(url_for('.index')))
@@ -227,7 +227,7 @@ def show_all():
     return resp
 
 
-@main.route('/followed')
+@main.route('/show_followed')
 @login_required
 def show_followed():
     resp = make_response(redirect(url_for('.index')))
